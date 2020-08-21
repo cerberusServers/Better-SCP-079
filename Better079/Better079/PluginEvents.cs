@@ -83,162 +83,162 @@ namespace Better079
             return new Room(transform.name, transform, transform.position);
         }
 
-        /*internal void ConsoleCmd(ConsoleCommandEvent ev)
+        internal void ConsoleCmd(SendingConsoleCommandEventArgs ev)
         {
-            if (ev.Player.GetRole() == RoleType.Scp079)
+            if (ev.Player.Role.Equals(RoleType.Scp079))
             {
-                string[] args = ev.Command.Split(' ');
-                if (args[0].Equals(plugin.CommandPrefix))
+                string[] args = ev.Name.Split(' ');
+                if (args[0].Equals(plugin.Config.b079_prefix))
                 {
                     if (args.Length == 2)
                     {
                         if (args[1].ToLower().Equals("help") || args[1].ToLower().Equals("commands") || args[1].ToLower().Equals("?"))
                         {
-                            ev.ReturnMessage = plugin.HelpMsgTitle + "\n" +
-                                "\"." + plugin.CommandPrefix + " a1\" - " + plugin.HelpMsgA1 + " - " + plugin.A1Power + "+ AP - Tier " + (plugin.A1Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a2\" - " + plugin.HelpMsgA2 + " - " + plugin.A2Power + "+ AP - Tier " + (plugin.A2Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a3\" - " + plugin.HelpMsgA3 + " - " + plugin.A3Power + "+ AP - Tier " + (plugin.A3Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a4\" - " + plugin.HelpMsgA4 + " - " + plugin.A4Power + "+ AP - Tier " + (plugin.A4Tier + 1) + "+\n";
+                            ev.ReturnMessage = plugin.Config.b079_help_title + "\n" +
+                                "\"." + plugin.Config.b079_prefix + " a1\" - " + plugin.Config.b079_help_a1 + " - " + plugin.Config.b079_a1_power + "+ AP - Tier " + (plugin.Config.b079_a1_tier + 1) + "+\n" +
+                                "\"." + plugin.Config.b079_prefix + " a2\" - " + plugin.Config.b079_help_a2 + " - " + plugin.Config.b079_a2_power + "+ AP - Tier " + (plugin.Config.b079_a2_tier + 1) + "+\n" +
+                                "\"." + plugin.Config.b079_prefix + " a3\" - " + plugin.Config.b079_help_a3 + " - " + plugin.Config.b079_a3_power + "+ AP - Tier " + (plugin.Config.b079_a3_tier + 1) + "+\n" +
+                                "\"." + plugin.Config.b079_prefix + " a4\" - " + plugin.Config.b079_help_a4 + " - " + plugin.Config.b079_a4_power + "+ AP - Tier " + (plugin.Config.b079_a4_tier + 1) + "+\n";
                             return;
                         }
 
                         if (args[1].ToLower().Equals("a1"))
                         {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A1Tier)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a1_tier)
                             {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A1Tier + 1));
+                                ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a1_tier + 1));
                                 return;
                             }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A1Power)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a1_power)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A1Power;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a1_power;
                             }
                             else
                             {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
+                                ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
                             var cams = GetSCPCameras();
                             if (cams.Count > 0)
                             {
                                 Camera079 cam = cams[UnityEngine.Random.Range(0, cams.Count)];
-                                ev.Player.scp079PlayerScript.CmdSwitchCamera(cam.cameraId, false);
-                                ev.ReturnMessage = plugin.RunA1Msg;
+                                ev.Player.ReferenceHub.scp079PlayerScript.CmdSwitchCamera(cam.cameraId, false);
+                                ev.ReturnMessage = plugin.Config.b079_msg_a1_run;
                                 return;
                             }
                             else
                             {
-                                ev.ReturnMessage = plugin.FailA1Msg;
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A1Power;
+                                ev.ReturnMessage = plugin.Config.b079_msg_a1_fail;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a1_power;
                                 return;
                             }
                         }
 
                         if (args[1].ToLower().Equals("a2"))
                         {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A2Tier)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a2_tier)
                             {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A2Tier + 1));
+                                ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a2_tier + 1));
                                 return;
                             }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A2Power)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a2_power)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A2Power;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a2_power;
                             }
                             else
                             {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
+                                ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
-                            if (Time.timeSinceLevelLoad - a2cooldown < plugin.A2Cooldown)
+                            if (Time.timeSinceLevelLoad - a2cooldown < plugin.Config.b079_a2_cooldown)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
+                                ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
-                            Room room = SCP079Room(ev.Player);
+                            Room room = SCP079Room(ev.Player.ReferenceHub);
                             if (room == null)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
+                                ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
                             if (room.Zone == ZoneType.Surface)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
+                                ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
-                            foreach (var item in plugin.A2BlacklistRooms)
+                            foreach (var item in plugin.Config.b079_a2_blacklisted_rooms)
                             {
                                 if (room.Name.ToLower().Contains(item.ToLower()))
                                 {
-                                    ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                    ev.ReturnMessage = plugin.FailA2Msg;
+                                    ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
+                                    ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                     return;
                                 }
                             }
-                            Timing.RunCoroutine(GasRoom(room, ev.Player));
-                            ev.ReturnMessage = plugin.RunA2Msg;
+                            Timing.RunCoroutine(GasRoom(room, ev.Player.ReferenceHub));
+                            ev.ReturnMessage = plugin.Config.b079_msg_a2_run;
                             return;
                         }
 
                         if (args[1].ToLower().Equals("a3"))
                         {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A3Tier)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a3_tier)
                             {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A3Tier + 1));
+                                ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a3_tier + 1));
                                 return;
                             }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A3Power)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a3_power)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A3Power;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a3_power;
                             }
                             else
                             {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
+                                ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
-                            Generator079.Generators[0].RpcCustomOverchargeForOurBeautifulModCreators(plugin.A3Timer, false);
-                            ev.ReturnMessage = plugin.RunA3Msg;
+                            Generator079.Generators[0].ServerOvercharge(plugin.Config.b079_a3_timer, false);
+                            ev.ReturnMessage = plugin.Config.b079_msg_a3_run;
                             return;
                         }
 
                         if (args[1].ToLower().Equals("a4"))
                         {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A4Tier)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a4_tier)
                             {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A4Tier + 1));
+                                ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a4_tier + 1));
                                 return;
                             }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A4Power)
+                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a4_power)
                             {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A4Power;
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a4_power;
                             }
                             else
                             {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
+                                ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
-                            var pos = ev.Player.scp079PlayerScript.currentCamera.transform.position;
-                            GrenadeManager gm = ev.Player.GetComponent<GrenadeManager>();
+                            var pos = ev.Player.ReferenceHub.scp079PlayerScript.currentCamera.transform.position;
+                            GrenadeManager gm = ev.Player.ReferenceHub.GetComponent<GrenadeManager>();
                             GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);
                             FlashGrenade flash = GameObject.Instantiate(settings.grenadeInstance).GetComponent<FlashGrenade>();
                             flash.fuseDuration = 0.5f;
                             flash.InitData(gm, Vector3.zero, Vector3.zero, 1f);
                             flash.transform.position = pos;
                             NetworkServer.Spawn(flash.gameObject);
-                            ev.ReturnMessage = plugin.RunA4Msg;
+                            ev.ReturnMessage = plugin.Config.b079_msg_a4_run;
                             return;
                         }
-                        ev.ReturnMessage = plugin.HelpMsg.Replace("$prefix", "" + plugin.CommandPrefix);
+                        ev.ReturnMessage = plugin.Config.b079_msg_help_cmd_fail.Replace("$prefix", "" + plugin.Config.b079_prefix);
                         return;
                     }
-                    ev.ReturnMessage = plugin.HelpMsg.Replace("$prefix", "" + plugin.CommandPrefix);
+                    ev.ReturnMessage = plugin.Config.b079_msg_help_cmd_fail.Replace("$prefix", "" + plugin.Config.b079_prefix);
                     return;
                 }
             }
-        }*/
+        }
 
         public static IEnumerator<float> GasRoom(Room room, ReferenceHub scp)
         {

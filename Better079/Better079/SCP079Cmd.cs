@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Better079
 {
-    [CommandHandler(typeof(ClientCommandHandler))]
+    /*[CommandHandler(typeof(ClientCommandHandler))]
     public class SCP079Cmd : ICommand
     {
         public string Command => "079";
@@ -186,5 +186,5 @@ namespace Better079
             response = Better079Plugin.instance.Config.b079_msg_help_cmd_fail.Replace("$prefix", "" + Better079Plugin.instance.Config.b079_prefix);
             return false;
         }
-    }
+    }*/
 }
