@@ -12,27 +12,23 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Better079
-{
-    public class PluginEvents
-    {
+namespace Better079 {
+    public class PluginEvents {
         private Better079Plugin plugin;
         internal static float a2cooldown = 0f;
+        internal static float a4cooldown = 0f;
 
-        public PluginEvents(Better079Plugin better079Plugin)
-        {
+        public PluginEvents(Better079Plugin better079Plugin) {
             this.plugin = better079Plugin;
         }
 
-        internal void RoundStart()
-        {
+        internal void RoundStart() {
             a2cooldown = 0f;
+            a4cooldown = 0f;
         }
 
-        internal void PlayerSpawn(SpawningEventArgs ev)
-        {
-            if (ev.Player.Role == RoleType.Scp079)
-            {
+        internal void PlayerSpawn(SpawningEventArgs ev) {
+            if(ev.Player.Role == RoleType.Scp079) {
                 ev.Player.ReferenceHub.hints.Show(new TextHint(Better079Plugin.instance.Config.b079_spawn_msg, new HintParameter[] { new StringHintParameter("") }, new HintEffect[]
                 {
                     HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 3)
@@ -41,18 +37,13 @@ namespace Better079
             }
         }
 
-        public static List<Camera079> GetSCPCameras()
-        {
+        public static List<Camera079> GetSCPCameras() {
             var list = GameObject.FindObjectsOfType<Camera079>();
             List<Camera079> cams = new List<Camera079>();
-            foreach (var ply in PlayerManager.players)
-            {
-                if (ply.GetComponent<ReferenceHub>().characterClassManager.CurRole.team == Team.SCP && ply.GetComponent<ReferenceHub>().characterClassManager.NetworkCurClass != RoleType.Scp079)
-                {
-                    foreach (var cam in list)
-                    {
-                        if (Vector3.Distance(cam.transform.position, ply.transform.position) <= Better079Plugin.instance.Config.b079_a1_dist)
-                        {
+            foreach(var ply in PlayerManager.players) {
+                if(ply.GetComponent<ReferenceHub>().characterClassManager.CurRole.team == Team.SCP && ply.GetComponent<ReferenceHub>().characterClassManager.NetworkCurClass != RoleType.Scp079) {
+                    foreach(var cam in list) {
+                        if(Vector3.Distance(cam.transform.position, ply.transform.position) <= Better079Plugin.instance.Config.b079_a1_dist) {
                             cams.Add(cam);
                         }
                     }
@@ -62,38 +53,41 @@ namespace Better079
         }
 
         // https://github.com/galaxy119/EXILED/blob/master/EXILED_Main/Extensions/Player.cs
-        public static Room SCP079Room(ReferenceHub player)
-        {
+        public static Room SCP079Room(ReferenceHub player) {
             Vector3 playerPos = player.scp079PlayerScript.currentCamera.transform.position;
             Vector3 end = playerPos - new Vector3(0f, 10f, 0f);
             bool flag = Physics.Linecast(playerPos, end, out RaycastHit raycastHit, -84058629);
 
-            if (!flag || raycastHit.transform == null)
+            if(!flag || raycastHit.transform == null)
                 return null;
 
             Transform transform = raycastHit.transform;
 
-            while (transform.parent != null && transform.parent.parent != null)
+            while(transform.parent != null && transform.parent.parent != null)
                 transform = transform.parent;
 
-            foreach (Room room in Map.Rooms)
-                if (room.Position == transform.position)
+            foreach(Room room in Map.Rooms)
+                if(room.Position == transform.position)
                     return room;
 
             return new Room(transform.name, transform, transform.position);
         }
 
-        internal void ConsoleCmd(SendingConsoleCommandEventArgs ev)
-        {
-            if (ev.Player.Role.Equals(RoleType.Scp079))
-            {
-                string[] args = ev.Name.Split(' ');
-                if (args[0].Equals(plugin.Config.b079_prefix))
-                {
-                    if (args.Length == 2)
-                    {
-                        if (args[1].ToLower().Equals("help") || args[1].ToLower().Equals("commands") || args[1].ToLower().Equals("?"))
-                        {
+        public void ConsoleCmd(SendingConsoleCommandEventArgs ev) {
+            if(ev.Player.Role.Equals(RoleType.Scp079)) {
+
+                if(ev.Name.Equals(plugin.Config.b079_prefix)) {
+                    ev.Allow = false;
+                    if(ev.Arguments.IsEmpty()) {
+                        ev.ReturnMessage = plugin.Config.b079_help_title + "\n" +
+                            "\"." + plugin.Config.b079_prefix + " a1\" - " + plugin.Config.b079_help_a1 + " - " + plugin.Config.b079_a1_power + "+ AP - Tier " + (plugin.Config.b079_a1_tier + 1) + "+\n" +
+                            "\"." + plugin.Config.b079_prefix + " a2\" - " + plugin.Config.b079_help_a2 + " - " + plugin.Config.b079_a2_power + "+ AP - Tier " + (plugin.Config.b079_a2_tier + 1) + "+\n" +
+                            "\"." + plugin.Config.b079_prefix + " a3\" - " + plugin.Config.b079_help_a3 + " - " + plugin.Config.b079_a3_power + "+ AP - Tier " + (plugin.Config.b079_a3_tier + 1) + "+\n" +
+                            "\"." + plugin.Config.b079_prefix + " a4\" - " + plugin.Config.b079_help_a4 + " - " + plugin.Config.b079_a4_power + "+ AP - Tier " + (plugin.Config.b079_a4_tier + 1) + "+\n";
+                        return;
+                    }
+                    if(ev.Arguments.Count >= 1) {
+                        if(ev.Arguments[0].ToLower().Equals("help") || ev.Arguments[0].ToLower().Equals("commands") || ev.Arguments[0].ToLower().Equals("?")) {
                             ev.ReturnMessage = plugin.Config.b079_help_title + "\n" +
                                 "\"." + plugin.Config.b079_prefix + " a1\" - " + plugin.Config.b079_help_a1 + " - " + plugin.Config.b079_a1_power + "+ AP - Tier " + (plugin.Config.b079_a1_tier + 1) + "+\n" +
                                 "\"." + plugin.Config.b079_prefix + " a2\" - " + plugin.Config.b079_help_a2 + " - " + plugin.Config.b079_a2_power + "+ AP - Tier " + (plugin.Config.b079_a2_tier + 1) + "+\n" +
@@ -102,77 +96,59 @@ namespace Better079
                             return;
                         }
 
-                        if (args[1].ToLower().Equals("a1"))
-                        {
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a1_tier)
-                            {
+                        if(ev.Arguments[0].ToLower().Equals("a1")) {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a1_tier) {
                                 ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a1_tier + 1));
                                 return;
                             }
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a1_power)
-                            {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a1_power) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a1_power;
-                            }
-                            else
-                            {
+                            } else {
                                 ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
                             var cams = GetSCPCameras();
-                            if (cams.Count > 0)
-                            {
+                            if(cams.Count > 0) {
                                 Camera079 cam = cams[UnityEngine.Random.Range(0, cams.Count)];
                                 ev.Player.ReferenceHub.scp079PlayerScript.CmdSwitchCamera(cam.cameraId, false);
                                 ev.ReturnMessage = plugin.Config.b079_msg_a1_run;
                                 return;
-                            }
-                            else
-                            {
+                            } else {
                                 ev.ReturnMessage = plugin.Config.b079_msg_a1_fail;
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a1_power;
                                 return;
                             }
                         }
 
-                        if (args[1].ToLower().Equals("a2"))
-                        {
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a2_tier)
-                            {
+                        if(ev.Arguments[0].ToLower().Equals("a2")) {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a2_tier) {
                                 ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a2_tier + 1));
                                 return;
                             }
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a2_power)
-                            {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a2_power) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a2_power;
-                            }
-                            else
-                            {
+                            } else {
                                 ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
-                            if (Time.timeSinceLevelLoad - a2cooldown < plugin.Config.b079_a2_cooldown)
-                            {
+                            if(Time.timeSinceLevelLoad - a2cooldown < plugin.Config.b079_a2_cooldown) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                 ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
                             Room room = SCP079Room(ev.Player.ReferenceHub);
-                            if (room == null)
-                            {
+                            if(room == null) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                 ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
-                            if (room.Zone == ZoneType.Surface)
-                            {
+                            if(room.Zone == ZoneType.Surface) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                 ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
-                            foreach (var item in plugin.Config.b079_a2_blacklisted_rooms)
-                            {
-                                if (room.Name.ToLower().Contains(item.ToLower()))
-                                {
+                            foreach(var item in plugin.Config.b079_a2_blacklisted_rooms) {
+                                if(room.Name.ToLower().Contains(item.ToLower())) {
                                     ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                     return;
@@ -183,19 +159,14 @@ namespace Better079
                             return;
                         }
 
-                        if (args[1].ToLower().Equals("a3"))
-                        {
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a3_tier)
-                            {
+                        if(ev.Arguments[0].ToLower().Equals("a3")) {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a3_tier) {
                                 ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a3_tier + 1));
                                 return;
                             }
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a3_power)
-                            {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a3_power) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a3_power;
-                            }
-                            else
-                            {
+                            } else {
                                 ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
@@ -204,22 +175,22 @@ namespace Better079
                             return;
                         }
 
-                        if (args[1].ToLower().Equals("a4"))
-                        {
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a4_tier)
-                            {
+                        if(ev.Arguments[0].ToLower().Equals("a4")) {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a4_tier) {
                                 ev.ReturnMessage = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a4_tier + 1));
                                 return;
                             }
-                            if (ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a4_power)
-                            {
-                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a4_power;
+                            if(a4cooldown >= Time.time) {
+                                ev.ReturnMessage = $"<color=red>Ésta habilidad está en cooldown ({(int) (a4cooldown - Time.time)})</color>";
+                                return;
                             }
-                            else
-                            {
+                            if(ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a4_power) {
+                                ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a4_power;
+                            } else {
                                 ev.ReturnMessage = plugin.Config.b079_msg_no_power;
                                 return;
                             }
+                            a4cooldown = Time.time + 5f;
                             var pos = ev.Player.ReferenceHub.scp079PlayerScript.currentCamera.transform.position;
                             GrenadeManager gm = ev.Player.ReferenceHub.GetComponent<GrenadeManager>();
                             GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);
@@ -240,31 +211,24 @@ namespace Better079
             }
         }
 
-        public static IEnumerator<float> GasRoom(Room room, ReferenceHub scp)
-        {
+        public static IEnumerator<float> GasRoom(Room room, ReferenceHub scp) {
             a2cooldown = Time.timeSinceLevelLoad;
-            if (!Better079Plugin.instance.Config.b079_a2_disable_cassie)
-            {
+            if(!Better079Plugin.instance.Config.b079_a2_disable_cassie) {
                 string str = ".g4 ";
-                for (int i = Better079Plugin.instance.Config.b079_a2_timer; i > 0f; i--)
-                {
+                for(int i = Better079Plugin.instance.Config.b079_a2_timer; i > 0f; i--) {
                     str += ". .g4 ";
                 }
                 RespawnEffectsController.PlayCassieAnnouncement(str, false, false);
             }
             List<Door> doors = Map.Doors.Where((d) => Vector3.Distance(d.transform.position, room.Position) <= 20f).ToList();
-            foreach (var item in doors)
-            {
+            foreach(var item in doors) {
                 item.NetworkisOpen = true;
                 item.Networklocked = true;
             }
-            for (int i = Better079Plugin.instance.Config.b079_a2_timer; i > 0f; i--)
-            {
-                foreach (var ply in PlayerManager.players)
-                {
+            for(int i = Better079Plugin.instance.Config.b079_a2_timer; i > 0f; i--) {
+                foreach(var ply in PlayerManager.players) {
                     var player = new Player(ply);
-                    if (player.Team != Team.SCP && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform)
-                    {
+                    if(player.Team != Team.SCP && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform) {
                         player.ReferenceHub.hints.Show(new TextHint(Better079Plugin.instance.Config.b079_msg_a2_warn.Replace("$seconds", "" + i), new HintParameter[] { new StringHintParameter("") }, new HintEffect[]
                         {
                             HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 3)
@@ -276,40 +240,32 @@ namespace Better079
                 }
                 yield return Timing.WaitForSeconds(1f);
             }
-            foreach (var item in doors)
-            {
+            foreach(var item in doors) {
                 item.NetworkisOpen = false;
                 item.Networklocked = true;
             }
-            foreach (var ply in PlayerManager.players)
-            {
+            foreach(var ply in PlayerManager.players) {
                 var player = new Player(ply);
-                if (player.Team != Team.SCP && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform)
-                {
+                if(player.Team != Team.SCP && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform) {
                     player.ReferenceHub.hints.Show(new TextHint(Better079Plugin.instance.Config.b079_msg_a2_active, new HintParameter[] { new StringHintParameter("") }, new HintEffect[]
                     {
                         HintEffectPresets.TrailingPulseAlpha(0.5f, 1f, 0.5f, 2f, 0f, 3)
                     }, 5f));
                 }
             }
-            for (int i = 0; i < Better079Plugin.instance.Config.b079_a2_gas_timer * 2; i++)
-            {
-                foreach (var ply in PlayerManager.players)
-                {
+            for(int i = 0; i < Better079Plugin.instance.Config.b079_a2_gas_timer * 2; i++) {
+                foreach(var ply in PlayerManager.players) {
                     var player = new Player(ply);
-                    if (player.Team != Team.SCP && player.Role != RoleType.Spectator && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform)
-                    {
+                    if(player.Team != Team.SCP && player.Role != RoleType.Spectator && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform) {
                         player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(10f, "WORLD", DamageTypes.Decont, 0), player.ReferenceHub.gameObject);
-                        if (player.Role == RoleType.Spectator)
-                        {
+                        if(player.Role == RoleType.Spectator) {
                             scp.scp079PlayerScript.AddExperience(Better079Plugin.instance.Config.b079_a2_exp);
                         }
                     }
                 }
                 yield return Timing.WaitForSeconds(0.5f);
             }
-            foreach (var item in doors)
-            {
+            foreach(var item in doors) {
                 item.Networklocked = false;
             }
         }
