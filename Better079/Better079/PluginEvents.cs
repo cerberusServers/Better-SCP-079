@@ -53,25 +53,7 @@ namespace Better079 {
         }
 
         // https://github.com/galaxy119/EXILED/blob/master/EXILED_Main/Extensions/Player.cs
-        public static Room SCP079Room(ReferenceHub player) {
-            Vector3 playerPos = player.scp079PlayerScript.currentCamera.transform.position;
-            Vector3 end = playerPos - new Vector3(0f, 10f, 0f);
-            bool flag = Physics.Linecast(playerPos, end, out RaycastHit raycastHit, -84058629);
-
-            if(!flag || raycastHit.transform == null)
-                return null;
-
-            Transform transform = raycastHit.transform;
-
-            while(transform.parent != null && transform.parent.parent != null)
-                transform = transform.parent;
-
-            foreach(Room room in Map.Rooms)
-                if(room.Position == transform.position)
-                    return room;
-
-            return new Room(transform.name, transform, transform.position);
-        }
+        
 
         public void ConsoleCmd(SendingConsoleCommandEventArgs ev) {
             if(ev.Player.Role.Equals(RoleType.Scp079)) {
@@ -136,7 +118,7 @@ namespace Better079 {
                                 ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
                                 return;
                             }
-                            Room room = SCP079Room(ev.Player.ReferenceHub);
+                            Room room = ev.Player.CurrentRoom;
                             if(room == null) {
                                 ev.Player.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                 ev.ReturnMessage = plugin.Config.b079_msg_a2_fail;
