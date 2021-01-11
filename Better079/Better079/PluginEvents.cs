@@ -4,6 +4,7 @@ using Exiled.API.Features;
 using Exiled.Events.EventArgs;
 using Grenades;
 using Hints;
+using Interactables.Interobjects.DoorUtils;
 using MEC;
 using Mirror;
 using Respawning;
@@ -202,10 +203,10 @@ namespace Better079 {
                 }
                 RespawnEffectsController.PlayCassieAnnouncement(str, false, false);
             }
-            List<Door> doors = Map.Doors.Where((d) => Vector3.Distance(d.transform.position, room.Position) <= 20f).ToList();
+            List<DoorVariant> doors = Map.Doors.Where((d) => Vector3.Distance(d.transform.position, room.Position) <= 20f).ToList();
             foreach(var item in doors) {
-                item.NetworkisOpen = true;
-                item.Networklocked = true;
+                item.TargetState = true;
+                item.ServerChangeLock(DoorLockReason.Lockdown079, true);
             }
             for(int i = Better079Plugin.instance.Config.b079_a2_timer; i > 0f; i--) {
                 foreach(var ply in PlayerManager.players) {
@@ -223,8 +224,8 @@ namespace Better079 {
                 yield return Timing.WaitForSeconds(1f);
             }
             foreach(var item in doors) {
-                item.NetworkisOpen = false;
-                item.Networklocked = true;
+                item.TargetState = false;
+                item.ServerChangeLock(DoorLockReason.Lockdown079, true);
             }
             foreach(var ply in PlayerManager.players) {
                 var player = new Player(ply);
@@ -239,7 +240,7 @@ namespace Better079 {
                 foreach(var ply in PlayerManager.players) {
                     var player = new Player(ply);
                     if(player.Team != Team.SCP && player.Role != RoleType.Spectator && player.CurrentRoom != null && player.CurrentRoom.Transform == room.Transform) {
-                        player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(10f, "WORLD", DamageTypes.Decont, 0), player.ReferenceHub.gameObject);
+                        player.ReferenceHub.playerStats.HurtPlayer(new PlayerStats.HitInfo(10f, "SCP-079 Memetic", DamageTypes.Decont, 0), player.ReferenceHub.gameObject);
                         if(player.Role == RoleType.Spectator) {
                             scp.scp079PlayerScript.AddExperience(Better079Plugin.instance.Config.b079_a2_exp);
                         }
@@ -248,7 +249,7 @@ namespace Better079 {
                 yield return Timing.WaitForSeconds(0.5f);
             }
             foreach(var item in doors) {
-                item.Networklocked = false;
+                item.ServerChangeLock(DoorLockReason.Regular079, false);
             }
         }
     }
