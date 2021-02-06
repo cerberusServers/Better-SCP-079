@@ -19,6 +19,7 @@ namespace Better079
     {
         private Better079Plugin plugin;
         internal static float a2cooldown = 0f;
+        internal static float a4cooldown = 0f;
 
         public PluginEvents(Better079Plugin better079Plugin)
         {
@@ -28,6 +29,7 @@ namespace Better079
         internal void RoundStart()
         {
             a2cooldown = 0f;
+            a4cooldown = 0f;
         }
 
         internal void PlayerSpawn(SpawningEventArgs ev)

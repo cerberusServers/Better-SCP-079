@@ -160,6 +160,15 @@ namespace Better079
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a4_tier + 1));
                                     return true;
                                 }
+                                if (Time.timeSinceLevelLoad - PluginEvents.a4cooldown < plugin.Config.b079_a4_cooldown)
+                                {
+                                    var r = $"\nTienes que esperar {plugin.Config.b079_a4_cooldown}s para volver a utilizar esta habilidad";
+
+                                    plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
+                                    player.ShowHint(r);
+                                    response = r;
+                                    return true;
+                                }
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a4_power)
                                 {
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana -= plugin.Config.b079_a4_power;
@@ -169,6 +178,7 @@ namespace Better079
                                     response = plugin.Config.b079_msg_no_power;
                                     return true;
                                 }
+                                PluginEvents.a4cooldown = Time.timeSinceLevelLoad;
                                 var pos = plr.ReferenceHub.scp079PlayerScript.currentCamera.transform.position;
                                 GrenadeManager gm = plr.ReferenceHub.GetComponent<GrenadeManager>();
                                 GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);

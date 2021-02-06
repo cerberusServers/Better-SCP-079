@@ -76,8 +76,9 @@ namespace Better079
         public int b079_a2_gas_timer { get; set; } = 10;
         [Description("Killing XP with memetic agent")]
         public float b079_a2_exp { get; set; } = 35f;
-        [Description("Cooldown")]
+        [Description("Cooldowns")]
         public float b079_a2_cooldown { get; set; } = 10f;
+        public float b079_a4_cooldown { get; set; } = 8f;
         [Description("Blacklist rooms | recommended: - LCZ_914 - EZ_GateB - EZ_GateA - HCZ_106")]
         public List<string> b079_a2_blacklisted_rooms { get; set; } = new List<string>();
         [Description("Cassie announcement memetic agent | for the sake of your ears leave this on false")]
