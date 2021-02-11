@@ -184,7 +184,7 @@ namespace Better079
                                 GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);
                                 FlashGrenade flash = GameObject.Instantiate(settings.grenadeInstance).GetComponent<FlashGrenade>();
                                 flash.fuseDuration = 0.5f;
-                                flash.InitData(gm, Vector3.zero, Vector3.zero, 1f);
+                                flash.InitData(gm, Vector3.zero, Vector3.down, 1f);
                                 flash.transform.position = pos;
                                 NetworkServer.Spawn(flash.gameObject);
                                 response = plugin.Config.b079_msg_a4_run;
