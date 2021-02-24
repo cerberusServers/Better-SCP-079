@@ -91,7 +91,7 @@ namespace Better079
                 ExpGainType.GeneralInteractions, 5
             },
             {
-                ExpGainType.KillAssist, 2
+                ExpGainType.KillAssist, 1
             }
         };
     }
