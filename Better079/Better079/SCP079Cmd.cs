@@ -97,7 +97,7 @@ namespace Better079
                                     response = plugin.Config.b079_msg_no_power;
                                     return true;
                                 }
-                                if (Time.timeSinceLevelLoad - PluginEvents.a2cooldown < plugin.Config.b079_a2_cooldown)
+                                if (Time.timeSinceLevelLoad >= PluginEvents.a2cooldown)
                                 {
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     response = plugin.Config.b079_msg_a2_fail;
@@ -160,9 +160,10 @@ namespace Better079
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a4_tier + 1));
                                     return true;
                                 }
-                                if (Time.timeSinceLevelLoad - PluginEvents.a4cooldown < plugin.Config.b079_a4_cooldown)
+                                if (Time.timeSinceLevelLoad >= PluginEvents.a4cooldown)
                                 {
-                                    var r = $"\nTienes que esperar {plugin.Config.b079_a4_cooldown}s para volver a utilizar esta habilidad";
+                                    
+                                    var r = $"\nTienes que esperar {(int)(PluginEvents.a4cooldown - Time.timeSinceLevelLoad)}s para volver a utilizar esta habilidad";
 
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     player.ShowHint(r);
@@ -178,7 +179,7 @@ namespace Better079
                                     response = plugin.Config.b079_msg_no_power;
                                     return true;
                                 }
-                                PluginEvents.a4cooldown = Time.timeSinceLevelLoad;
+                                PluginEvents.a4cooldown = Time.timeSinceLevelLoad + plugin.Config.b079_a4_cooldown;
                                 var pos = plr.ReferenceHub.scp079PlayerScript.currentCamera.transform.position;
                                 GrenadeManager gm = plr.ReferenceHub.GetComponent<GrenadeManager>();
                                 GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);

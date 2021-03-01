@@ -20,6 +20,7 @@ namespace Better079
         private Better079Plugin plugin;
         internal static float a2cooldown = 0f;
         internal static float a4cooldown = 0f;
+        internal static float cda2;
 
         public PluginEvents(Better079Plugin better079Plugin)
         {
@@ -30,6 +31,7 @@ namespace Better079
         {
             a2cooldown = 0f;
             a4cooldown = 0f;
+            cda2 = plugin.Config.b079_a2_cooldown;
         }
 
         internal void PlayerSpawn(SpawningEventArgs ev)
@@ -66,14 +68,13 @@ namespace Better079
 
         public void ExpGain(GainingExperienceEventArgs ev)
         {
-            if (plugin.Config.xpboost) return;
+            if (!plugin.Config.xpboost) return;
 
             foreach (ExpGainType gainType in plugin.Config.experienceGain.Keys)
                 if (gainType == ev.GainType)
                     ev.Amount += plugin.Config.experienceGain[gainType];
         }
 
-        // https://github.com/galaxy119/EXILED/blob/master/EXILED_Main/Extensions/Player.cs
         public static Room SCP079Room(ReferenceHub player)
         {
             Vector3 playerPos = player.scp079PlayerScript.currentCamera.transform.position;
@@ -95,166 +96,9 @@ namespace Better079
             //return new Room(transform.name, transform, transform.position);
         }
 
-        /*internal void ConsoleCmd(ConsoleCommandEvent ev)
-        {
-            if (ev.Player.GetRole() == RoleType.Scp079)
-            {
-                string[] args = ev.Command.Split(' ');
-                if (args[0].Equals(plugin.CommandPrefix))
-                {
-                    if (args.Length == 2)
-                    {
-                        if (args[1].ToLower().Equals("help") || args[1].ToLower().Equals("commands") || args[1].ToLower().Equals("?"))
-                        {
-                            ev.ReturnMessage = plugin.HelpMsgTitle + "\n" +
-                                "\"." + plugin.CommandPrefix + " a1\" - " + plugin.HelpMsgA1 + " - " + plugin.A1Power + "+ AP - Tier " + (plugin.A1Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a2\" - " + plugin.HelpMsgA2 + " - " + plugin.A2Power + "+ AP - Tier " + (plugin.A2Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a3\" - " + plugin.HelpMsgA3 + " - " + plugin.A3Power + "+ AP - Tier " + (plugin.A3Tier + 1) + "+\n" +
-                                "\"." + plugin.CommandPrefix + " a4\" - " + plugin.HelpMsgA4 + " - " + plugin.A4Power + "+ AP - Tier " + (plugin.A4Tier + 1) + "+\n";
-                            return;
-                        }
-
-                        if (args[1].ToLower().Equals("a1"))
-                        {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A1Tier)
-                            {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A1Tier + 1));
-                                return;
-                            }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A1Power)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A1Power;
-                            }
-                            else
-                            {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
-                                return;
-                            }
-                            var cams = GetSCPCameras();
-                            if (cams.Count > 0)
-                            {
-                                Camera079 cam = cams[UnityEngine.Random.Range(0, cams.Count)];
-                                ev.Player.scp079PlayerScript.CmdSwitchCamera(cam.cameraId, false);
-                                ev.ReturnMessage = plugin.RunA1Msg;
-                                return;
-                            }
-                            else
-                            {
-                                ev.ReturnMessage = plugin.FailA1Msg;
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A1Power;
-                                return;
-                            }
-                        }
-
-                        if (args[1].ToLower().Equals("a2"))
-                        {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A2Tier)
-                            {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A2Tier + 1));
-                                return;
-                            }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A2Power)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A2Power;
-                            }
-                            else
-                            {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
-                                return;
-                            }
-                            if (Time.timeSinceLevelLoad - a2cooldown < plugin.A2Cooldown)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
-                                return;
-                            }
-                            Room room = SCP079Room(ev.Player);
-                            if (room == null)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
-                                return;
-                            }
-                            if (room.Zone == ZoneType.Surface)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                ev.ReturnMessage = plugin.FailA2Msg;
-                                return;
-                            }
-                            foreach (var item in plugin.A2BlacklistRooms)
-                            {
-                                if (room.Name.ToLower().Contains(item.ToLower()))
-                                {
-                                    ev.Player.scp079PlayerScript.NetworkcurMana += plugin.A2Power;
-                                    ev.ReturnMessage = plugin.FailA2Msg;
-                                    return;
-                                }
-                            }
-                            Timing.RunCoroutine(GasRoom(room, ev.Player));
-                            ev.ReturnMessage = plugin.RunA2Msg;
-                            return;
-                        }
-
-                        if (args[1].ToLower().Equals("a3"))
-                        {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A3Tier)
-                            {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A3Tier + 1));
-                                return;
-                            }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A3Power)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A3Power;
-                            }
-                            else
-                            {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
-                                return;
-                            }
-                            Generator079.Generators[0].RpcCustomOverchargeForOurBeautifulModCreators(plugin.A3Timer, false);
-                            ev.ReturnMessage = plugin.RunA3Msg;
-                            return;
-                        }
-
-                        if (args[1].ToLower().Equals("a4"))
-                        {
-                            if (ev.Player.scp079PlayerScript.NetworkcurLvl < plugin.A4Tier)
-                            {
-                                ev.ReturnMessage = plugin.TierRequiredMsg.Replace("$tier", "" + (plugin.A4Tier + 1));
-                                return;
-                            }
-                            if (ev.Player.scp079PlayerScript.NetworkcurMana >= plugin.A4Power)
-                            {
-                                ev.Player.scp079PlayerScript.NetworkcurMana -= plugin.A4Power;
-                            }
-                            else
-                            {
-                                ev.ReturnMessage = plugin.NoPowerMsg;
-                                return;
-                            }
-                            var pos = ev.Player.scp079PlayerScript.currentCamera.transform.position;
-                            GrenadeManager gm = ev.Player.GetComponent<GrenadeManager>();
-                            GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);
-                            FlashGrenade flash = GameObject.Instantiate(settings.grenadeInstance).GetComponent<FlashGrenade>();
-                            flash.fuseDuration = 0.5f;
-                            flash.InitData(gm, Vector3.zero, Vector3.zero, 1f);
-                            flash.transform.position = pos;
-                            NetworkServer.Spawn(flash.gameObject);
-                            ev.ReturnMessage = plugin.RunA4Msg;
-                            return;
-                        }
-                        ev.ReturnMessage = plugin.HelpMsg.Replace("$prefix", "" + plugin.CommandPrefix);
-                        return;
-                    }
-                    ev.ReturnMessage = plugin.HelpMsg.Replace("$prefix", "" + plugin.CommandPrefix);
-                    return;
-                }
-            }
-        }*/
-
         public static IEnumerator<float> GasRoom(Room room, ReferenceHub scp)
         {
-            a2cooldown = Time.timeSinceLevelLoad;
+            a2cooldown = Time.timeSinceLevelLoad + cda2;
             if (!Better079Plugin.instance.Config.b079_a2_disable_cassie)
             {
                 string str = ".g4 ";
