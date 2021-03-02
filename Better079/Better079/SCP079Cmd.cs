@@ -99,6 +99,8 @@ namespace Better079
                                 }
                                 if (Time.timeSinceLevelLoad >= PluginEvents.a2cooldown)
                                 {
+                                    var r = $"\nTienes que esperar {(int)(Time.timeSinceLevelLoad - PluginEvents.a2cooldown)}s para volver a utilizar esta habilidad";
+                                    player.ShowHint(r);
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     response = plugin.Config.b079_msg_a2_fail;
                                     return true;
@@ -163,7 +165,7 @@ namespace Better079
                                 if (Time.timeSinceLevelLoad >= PluginEvents.a4cooldown)
                                 {
                                     
-                                    var r = $"\nTienes que esperar {(int)(PluginEvents.a4cooldown - Time.timeSinceLevelLoad)}s para volver a utilizar esta habilidad";
+                                    var r = $"\nTienes que esperar {(int)(Time.timeSinceLevelLoad - PluginEvents.a4cooldown)}s para volver a utilizar esta habilidad";
 
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     player.ShowHint(r);
