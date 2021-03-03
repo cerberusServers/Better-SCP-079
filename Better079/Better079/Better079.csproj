@@ -73,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EXILED">
-      <Version>2.3.3</Version>
+      <Version>2.6.0-beta</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
       <Version>9.1.4</Version>

@@ -52,6 +52,7 @@ namespace Better079
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a1_tier)
                                 {
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a1_tier + 1));
+                                    player.ShowHint(response);
 
                                     return true;
                                 }
@@ -62,6 +63,7 @@ namespace Better079
                                 else
                                 {
                                     response = plugin.Config.b079_msg_no_power;
+                                    player.ShowHint(response);
                                     return true;
                                 }
                                 var cams = PluginEvents.GetSCPCameras();
@@ -77,6 +79,7 @@ namespace Better079
                                 {
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a1_power;
                                     response = plugin.Config.b079_msg_a1_fail;
+                                    player.ShowHint(response);
                                     return true;
                                 }
                             }
@@ -86,6 +89,7 @@ namespace Better079
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a2_tier)
                                 {
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a2_tier + 1));
+                                    player.ShowHint(response);
                                     return true;
                                 }
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a2_power)
@@ -95,11 +99,12 @@ namespace Better079
                                 else
                                 {
                                     response = plugin.Config.b079_msg_no_power;
+                                    player.ShowHint(response);
                                     return true;
                                 }
-                                if (Time.timeSinceLevelLoad >= PluginEvents.a2cooldown)
+                                if (Time.time < PluginEvents.a2cooldown)
                                 {
-                                    var r = $"\nTienes que esperar {(int)(Time.timeSinceLevelLoad - PluginEvents.a2cooldown)}s para volver a utilizar esta habilidad";
+                                    var r = $"\nTienes que esperar {(int)(PluginEvents.a2cooldown - Time.timeSinceLevelLoad)}s para volver a utilizar esta habilidad";
                                     player.ShowHint(r);
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     response = plugin.Config.b079_msg_a2_fail;
@@ -110,12 +115,14 @@ namespace Better079
                                 {
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     response = plugin.Config.b079_msg_a2_fail;
+                                    player.ShowHint(response);
                                     return true;
                                 }
                                 if (room.Zone == ZoneType.Surface)
                                 {
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     response = plugin.Config.b079_msg_a2_fail;
+                                    player.ShowHint(response);
                                     return true;
                                 }
                                 foreach (var item in plugin.Config.b079_a2_blacklisted_rooms)
@@ -124,6 +131,7 @@ namespace Better079
                                     {
                                         plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                         response = plugin.Config.b079_msg_a2_fail;
+                                        player.ShowHint(response);
                                         return true;
                                     }
                                 }
@@ -138,6 +146,7 @@ namespace Better079
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a3_tier)
                                 {
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a3_tier + 1));
+                                    player.ShowHint(response);
                                     return true;
                                 }
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurMana >= plugin.Config.b079_a3_power)
@@ -160,12 +169,13 @@ namespace Better079
                                 if (plr.ReferenceHub.scp079PlayerScript.NetworkcurLvl < plugin.Config.b079_a4_tier)
                                 {
                                     response = plugin.Config.b079_msg_tier_required.Replace("$tier", "" + (plugin.Config.b079_a4_tier + 1));
+                                    player.ShowHint(response);
                                     return true;
                                 }
-                                if (Time.timeSinceLevelLoad >= PluginEvents.a4cooldown)
+                                if (Time.time < PluginEvents.a4cooldown)
                                 {
                                     
-                                    var r = $"\nTienes que esperar {(int)(Time.timeSinceLevelLoad - PluginEvents.a4cooldown)}s para volver a utilizar esta habilidad";
+                                    var r = $"\nTienes que esperar {(int)(PluginEvents.a4cooldown - Time.timeSinceLevelLoad)}s para volver a utilizar esta habilidad";
 
                                     plr.ReferenceHub.scp079PlayerScript.NetworkcurMana += plugin.Config.b079_a2_power;
                                     player.ShowHint(r);
@@ -179,9 +189,10 @@ namespace Better079
                                 else
                                 {
                                     response = plugin.Config.b079_msg_no_power;
+                                    player.ShowHint(response);
                                     return true;
                                 }
-                                PluginEvents.a4cooldown = Time.timeSinceLevelLoad + plugin.Config.b079_a4_cooldown;
+                                PluginEvents.a4cooldown = Time.time + plugin.Config.b079_a4_cooldown;
                                 var pos = plr.ReferenceHub.scp079PlayerScript.currentCamera.transform.position;
                                 GrenadeManager gm = plr.ReferenceHub.GetComponent<GrenadeManager>();
                                 GrenadeSettings settings = gm.availableGrenades.FirstOrDefault(g => g.inventoryID == ItemType.GrenadeFlash);

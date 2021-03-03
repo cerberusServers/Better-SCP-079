@@ -98,7 +98,7 @@ namespace Better079
 
         public static IEnumerator<float> GasRoom(Room room, ReferenceHub scp)
         {
-            a2cooldown = Time.timeSinceLevelLoad + cda2;
+            a2cooldown = Time.time + cda2;
             if (!Better079Plugin.instance.Config.b079_a2_disable_cassie)
             {
                 string str = ".g4 ";
